@@ -1,22 +1,57 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import './Tab1.css';
+import {
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonPage,
+  IonRow,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
+import { useEffect, useState } from "react";
+import PhotoCard from "../components/PhotoCard";
+import { getPhotos } from "../services/api";
+import { Photo } from "../types/Photo";
+import "./Tab1.css";
 
 const Tab1: React.FC = () => {
+  const [photos, setPhotos] = useState<Photo[]>([]);
+
+  const fetchPhotos = async () => {
+    const photos = await getPhotos();
+    console.log({ photos });
+    setPhotos(photos);
+  };
+
+  useEffect(() => {
+    fetchPhotos();
+  }, []);
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Tab 1</IonTitle>
+          <IonTitle>Photos</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Tab 1</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <ExploreContainer name="Tab 1 page" />
+        <div className="gallery">
+          <IonGrid className="photo-list">
+            <IonRow>
+              {photos.map((photo) => (
+                <IonCol
+                  sizeXs="12"
+                  sizeMd="6"
+                  sizeXl="4"
+                  className="photo-list-item"
+                  key={photo.id}
+                >
+                  <PhotoCard photo={photo} />
+                </IonCol>
+              ))}
+            </IonRow>
+          </IonGrid>
+        </div>
       </IonContent>
     </IonPage>
   );
